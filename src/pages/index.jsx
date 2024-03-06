@@ -29,7 +29,7 @@ export default function Home({ products }) {
       <FeatureArea />
       <ProductArea products={products} />
       <BannerArea />
-      <OfferProducts />
+      <OfferProducts products={products} />
       <ProductGadgetArea />
       <ProductBanner />
       <NewArrivals />

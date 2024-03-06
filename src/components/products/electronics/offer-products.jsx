@@ -36,14 +36,9 @@ const sliderSetting = {
   },
 };
 
-const OfferProducts = () => {
-  const {
-    data: products,
-    isError,
-    isLoading,
-  } = useGetOfferProductsQuery("electronics");
+const OfferProducts = ({ products }) => {
+  const { data, isError, isLoading } = useGetOfferProductsQuery("electronics");
   // decide what to render
-  console.log(products);
   let content = null;
   if (isLoading) {
     content = <HomeOfferPrdLoader loading={isLoading} />;
@@ -51,11 +46,11 @@ const OfferProducts = () => {
   if (!isLoading && isError) {
     content = <ErrorMsg msg="There was an error" />;
   }
-  if (!isLoading && !isError && products?.data?.length === 0) {
+  if (!isLoading && !isError && products?.length === 0) {
     content = <ErrorMsg msg="No Products found!" />;
   }
-  if (!isLoading && !isError && products?.data?.length > 0) {
-    const product_items = products.data;
+  if (!isLoading && !isError && products?.length > 0) {
+    const product_items = products.slice(0, 6);
     content = (
       <Swiper
         {...sliderSetting}
@@ -64,7 +59,7 @@ const OfferProducts = () => {
       >
         {product_items.map((item, i) => (
           <SwiperSlide key={i}>
-            <ProductItem product={item} offer_style={true} />
+            <ProductItem product={item} offer_style={true} prd={item} />
           </SwiperSlide>
         ))}
 

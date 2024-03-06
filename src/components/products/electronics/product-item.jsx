@@ -67,7 +67,10 @@ const ProductItem = ({ product, offer_style = false, prd }) => {
               width="0"
               height="0"
               sizes="100vw"
-              style={{ width: "281.5px", height: "325.17px" }}
+              style={{
+                width: offer_style ? "380px" : "281.5px",
+                height: offer_style ? "438.95px" : "325.17px",
+              }}
               alt="product-electronic"
             />
 
@@ -199,7 +202,9 @@ const ProductItem = ({ product, offer_style = false, prd }) => {
           {offer_style && (
             <div className="tp-product-countdown">
               <div className="tp-product-countdown-inner">
-                {dayjs().isAfter(offerDate?.endDate) ? (
+                {dayjs().isAfter(
+                  new Date("2024-04-02T14:00:57.036Z") || offerDate?.endDate
+                ) ? (
                   <ul>
                     <li>
                       <span>{0}</span> Day
@@ -215,7 +220,11 @@ const ProductItem = ({ product, offer_style = false, prd }) => {
                     </li>
                   </ul>
                 ) : (
-                  <Timer expiryTimestamp={new Date(offerDate?.endDate)} />
+                  <Timer
+                    expiryTimestamp={
+                      new Date("2024-04-02T14:00:57.036Z" || offerDate?.endDate)
+                    }
+                  />
                 )}
               </div>
             </div>
