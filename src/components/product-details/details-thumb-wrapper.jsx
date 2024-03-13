@@ -9,7 +9,7 @@ const DetailsThumbWrapper = ({
   imgWidth = 416,
   imgHeight = 480,
   videoId = false,
-  status
+  status,
 }) => {
   const [isVideoOpen, setIsVideoOpen] = useState(false);
   return (
@@ -20,11 +20,11 @@ const DetailsThumbWrapper = ({
             {imageURLs?.map((item, i) => (
               <button
                 key={i}
-                className={`nav-link ${item.img === activeImg ? "active" : ""}`}
+                className={`nav-link ${item.url === activeImg ? "active" : ""}`}
                 onClick={() => handleImageActive(item)}
               >
                 <Image
-                  src={item.img}
+                  src={item.url}
                   alt="image"
                   width={78}
                   height={100}
@@ -44,7 +44,9 @@ const DetailsThumbWrapper = ({
                 height={imgHeight}
               />
               <div className="tp-product-badge">
-                {status === 'out-of-stock' && <span className="product-hot">out-stock</span>}
+                {status === "out-of-stock" && (
+                  <span className="product-hot">out-stock</span>
+                )}
               </div>
               {videoId && (
                 <div

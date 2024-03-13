@@ -23,21 +23,24 @@ const ProductModal = () => {
   const { productItem, isModalOpen } = useSelector(
     (state) => state.productModal
   );
-  const { img, imageURLs,status } = productItem || {};
+  let subProduct = productItem.subProducts[0];
+  const { status } = productItem || {};
+  const imageURLs = subProduct.images;
+  const img = imageURLs[0].url;
   const [activeImg, setActiveImg] = useState(img);
-  const [loading,setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   // active image change when img change
   useEffect(() => {
     setActiveImg(img);
-    dispatch(initialOrderQuantity())
-    setLoading(false)
-  }, [img,dispatch]);
+    dispatch(initialOrderQuantity());
+    setLoading(false);
+  }, [img, dispatch]);
 
   // handle image active
   const handleImageActive = (item) => {
-    setActiveImg(item.img);
-    setLoading(true)
+    setActiveImg(item.url);
+    setLoading(true);
   };
 
   return (

@@ -6,11 +6,14 @@ import Image from "next/image";
 import useCartInfo from "@/hooks/use-cart-info";
 import { CartTwo, Compare, Menu, User, Wishlist } from "@/svg";
 import { openCartMini } from "@/redux/features/cartSlice";
+import { useSession } from "next-auth/react";
 
 const HeaderMainRight = ({ setIsCanvasOpen }) => {
   const { user: userInfo } = useSelector((state) => state.auth);
   const { wishlist } = useSelector((state) => state.wishlist);
   const { quantity } = useCartInfo();
+  const { data: session } = useSession();
+
   const dispatch = useDispatch();
   return (
     <div className="tp-header-main-right d-flex align-items-center justify-content-end">
@@ -18,19 +21,19 @@ const HeaderMainRight = ({ setIsCanvasOpen }) => {
         <div className="d-flex align-items-center">
           <div className="tp-header-login-icon">
             <span>
-              {userInfo?.imageURL ? (
+              {(session && session.user.image) || userInfo?.imageURL ? (
                 <Link href="/profile">
                   <Image
-                    src={userInfo.imageURL}
+                    src={session.user.image || userInfo.imageURL}
                     alt="user img"
                     width={35}
                     height={35}
                   />
                 </Link>
-              ) : userInfo?.name ? (
+              ) : (session && session.user.name) || userInfo?.name ? (
                 <Link href="/profile">
                   <h2 className="text-uppercase login_text">
-                    {userInfo?.name[0]}
+                    {session.user.name || userInfo?.name[0]}
                   </h2>
                 </Link>
               ) : (
@@ -39,15 +42,22 @@ const HeaderMainRight = ({ setIsCanvasOpen }) => {
             </span>
           </div>
           <div className="tp-header-login-content d-none d-xl-block">
-            {!userInfo?.name && (
+            {!session && !userInfo?.name && (
               <Link href="/login">
                 <span>Xin chào,</span>
               </Link>
             )}
-            {userInfo?.name && <span>Xin chào, {userInfo?.name}</span>}
+            {(session && session.user.name) ||
+              (userInfo?.name && (
+                <span>Xin chào, {ession.user.name || userInfo?.name}</span>
+              ))}
             <div className="tp-header-login-title">
-              {!userInfo?.name && <Link href="/login">Đăng Nhập</Link>}
-              {userInfo?.name && <Link href="/profile">Tài Khoản Của Bạn</Link>}
+              {!session && !userInfo?.name && (
+                <Link href="/login">Đăng Nhập</Link>
+              )}
+              {(session || userInfo?.name) && (
+                <Link href="/profile">Tài Khoản Của Bạn</Link>
+              )}
             </div>
           </div>
         </div>

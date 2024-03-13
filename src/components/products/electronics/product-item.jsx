@@ -108,7 +108,7 @@ const ProductItem = ({ product, offer_style = false, prd }) => {
                 </button>
               )}
               <button
-                onClick={() => dispatch(handleProductModal(product))}
+                onClick={() => dispatch(handleProductModal(prd))}
                 type="button"
                 className="tp-product-action-btn tp-product-quick-view-btn"
               >
@@ -136,7 +136,7 @@ const ProductItem = ({ product, offer_style = false, prd }) => {
             <a href="#">{prd?.category?.name || category?.name}</a>
           </div>
           <h3 className="tp-product-title">
-            <Link href={`/product-details/${_id}`}>
+            <Link href={`/product-details/${prd?._id || _id}`}>
               {prd?.name.slice(0, 26) || title}
             </Link>
           </h3>
@@ -154,7 +154,7 @@ const ProductItem = ({ product, offer_style = false, prd }) => {
                 (
                 {prd?.numReviews ||
                   (reviews && reviews.length > 0 ? reviews.length : 0)}{" "}
-                Review)
+                Đánh Giá)
               </span>
             </div>
           </div>

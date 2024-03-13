@@ -1,6 +1,6 @@
 import { createRouter } from "next-connect";
 import db from "../../../utils/db";
-import User from "../../../models/User";
+import User from "../../../../models/User";
 const router = createRouter();
 
 router.put(async (req, res) => {

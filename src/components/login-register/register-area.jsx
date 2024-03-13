@@ -5,7 +5,6 @@ import LoginShapes from "./login-shapes";
 import RegisterForm from "../forms/register-form";
 import GoogleSignUp from "./google-sign-up";
 
-
 const RegisterArea = () => {
   return (
     <>
@@ -16,23 +15,23 @@ const RegisterArea = () => {
             <div className="col-xl-6 col-lg-8">
               <div className="tp-login-wrapper">
                 <div className="tp-login-top text-center mb-30">
-                  <h3 className="tp-login-title">Sign Up Shofy.</h3>
+                  <h3 className="tp-login-title">Đăng Ký HV Shop.</h3>
                   <p>
-                    Already have an account?{" "}
+                    Bạn đã có sẵn tài khoản?{" "}
                     <span>
-                      <Link href="/login">Sign In</Link>
+                      <Link href="/login">Đăng Nhập</Link>
                     </span>
                   </p>
                 </div>
                 <div className="tp-login-option">
                   <div className="tp-login-social mb-10 d-flex flex-wrap align-items-center justify-content-center">
                     <div className="tp-login-option-item has-google">
-                      <GoogleSignUp/>
+                      <GoogleSignUp />
                     </div>
                   </div>
                   <div className="tp-login-mail text-center mb-40">
                     <p>
-                      or Sign up with <a href="#">Email</a>
+                      hoặc Đăng ký với <a href="#">Email</a>
                     </p>
                   </div>
                   {/* form start */}

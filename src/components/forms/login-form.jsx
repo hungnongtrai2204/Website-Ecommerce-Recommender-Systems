@@ -1,16 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import { useRouter } from 'next/router';
-import Link from 'next/link';
+import { useRouter } from "next/router";
+import Link from "next/link";
 // internal
-import { CloseEye, OpenEye } from '@/svg';
-import ErrorMsg from '../common/error-msg';
-import { useLoginUserMutation } from '@/redux/features/auth/authApi';
-import { notifyError, notifySuccess } from '@/utils/toast';
-
-
+import { CloseEye, OpenEye } from "@/svg";
+import ErrorMsg from "../common/error-msg";
+import { useLoginUserMutation } from "@/redux/features/auth/authApi";
+import { notifyError, notifySuccess } from "@/utils/toast";
+import { signIn } from "next-auth/react";
 // schema
 const schema = Yup.object().shape({
   email: Yup.string().required().email().label("Email"),
@@ -18,7 +17,7 @@ const schema = Yup.object().shape({
 });
 const LoginForm = () => {
   const [showPass, setShowPass] = useState(false);
-  const [loginUser, { }] = useLoginUserMutation();
+  const [loginUser, {}] = useLoginUserMutation();
   const router = useRouter();
   const { redirect } = router.query;
   // react hook form
@@ -31,20 +30,33 @@ const LoginForm = () => {
     resolver: yupResolver(schema),
   });
   // onSubmit
-  const onSubmit = (data) => {
-    loginUser({
+  const onSubmit = async (data) => {
+    console.log("Login", data);
+    const options = {
+      redirect: false,
       email: data.email,
       password: data.password,
-    })
-      .then((data) => {
-        if (data?.data) {
-          notifySuccess("Login successfully");
-          router.push(redirect || "/");
-        }
-        else {
-          notifyError(data?.error?.data?.error)
-        }
-      })
+    };
+    const res = await signIn("credentials", options);
+    if (res?.error) {
+      notifyError(res?.error);
+    } else {
+      notifySuccess("Login successfully");
+      router.push(redirect || "/");
+      // return Router.push(callbackUrl || "/");
+      // return router.push(callbackUrl || "/");
+    }
+    // loginUser({
+    //   email: data.email,
+    //   password: data.password,
+    // }).then((data) => {
+    //   if (data?.data) {
+    //     notifySuccess("Login successfully");
+    //     router.push(redirect || "/");
+    //   } else {
+    //     notifyError(data?.error?.data?.error);
+    //   }
+    // });
     reset();
   };
   return (
@@ -52,10 +64,16 @@ const LoginForm = () => {
       <div className="tp-login-input-wrapper">
         <div className="tp-login-input-box">
           <div className="tp-login-input">
-            <input {...register("email", { required: `Email is required!` })} name="email" id="email" type="email" placeholder="shofy@mail.com" />
+            <input
+              {...register("email", { required: `Email là cần thiết!` })}
+              name="email"
+              id="email"
+              type="email"
+              placeholder="shofy@mail.com"
+            />
           </div>
           <div className="tp-login-input-title">
-            <label htmlFor="email">Your Email</label>
+            <label htmlFor="email">Email Của Bạn</label>
           </div>
           <ErrorMsg msg={errors.email?.message} />
         </div>
@@ -63,10 +81,10 @@ const LoginForm = () => {
           <div className="p-relative">
             <div className="tp-login-input">
               <input
-                {...register("password", { required: `Password is required!` })}
+                {...register("password", { required: `Cần Có Mật Khẩu!` })}
                 id="password"
                 type={showPass ? "text" : "password"}
-                placeholder="Min. 6 character"
+                placeholder="Ít nhất 6 kí tự"
               />
             </div>
             <div className="tp-login-input-eye" id="password-show-toggle">
@@ -75,23 +93,25 @@ const LoginForm = () => {
               </span>
             </div>
             <div className="tp-login-input-title">
-              <label htmlFor="password">Password</label>
+              <label htmlFor="password">Mật Khẩu</label>
             </div>
           </div>
-          <ErrorMsg msg={errors.password?.message}/>
+          <ErrorMsg msg={errors.password?.message} />
         </div>
       </div>
       <div className="tp-login-suggetions d-sm-flex align-items-center justify-content-between mb-20">
         <div className="tp-login-remeber">
           <input id="remeber" type="checkbox" />
-          <label htmlFor="remeber">Remember me</label>
+          <label htmlFor="remeber">Nhớ tài khoản</label>
         </div>
         <div className="tp-login-forgot">
-          <Link href="/forgot">Forgot Password?</Link>
+          <Link href="/forgot">Quên Mật Khẩu?</Link>
         </div>
       </div>
       <div className="tp-login-bottom">
-        <button type='submit' className="tp-login-btn w-100">Login</button>
+        <button type="submit" className="tp-login-btn w-100">
+          Đăng Nhập
+        </button>
       </div>
     </form>
   );

@@ -4,14 +4,13 @@ import { useRouter } from "next/router";
 import ErrorMsg from "@/components/common/error-msg";
 import { useGetProductTypeCategoryQuery } from "@/redux/features/categoryApi";
 import CategoryListLoader from "@/components/loader/home/category-list-loader";
+import categoryJSON from "@/data/category.json";
 
 const PrdCategoryList = () => {
-  const {
-    data: categories,
-    isError,
-    isLoading,
-  } = useGetProductTypeCategoryQuery("electronics");
-  const router = useRouter()
+  const { data, isError, isLoading } =
+    useGetProductTypeCategoryQuery("electronics");
+  const router = useRouter();
+  const categories = JSON.parse(JSON.stringify(categoryJSON));
 
   // handle category route
   const handleCategoryRoute = (title) => {
@@ -21,13 +20,13 @@ const PrdCategoryList = () => {
         .replace("&", "")
         .split(" ")
         .join("-")}`
-    )
-  }
+    );
+  };
   // decide what to render
   let content = null;
 
   if (isLoading) {
-    content = <CategoryListLoader loading={isLoading}/>;
+    content = <CategoryListLoader loading={isLoading} />;
   }
   if (!isLoading && isError) {
     content = <ErrorMsg msg="There was an error" />;
@@ -39,7 +38,12 @@ const PrdCategoryList = () => {
     const category_items = categories.result;
     content = category_items.map((item) => (
       <li key={item._id}>
-        <a onClick={()=>handleCategoryRoute(item.parent)} className="cursor-pointer">{item.parent}</a>
+        <a
+          onClick={() => handleCategoryRoute(item.parent)}
+          className="cursor-pointer"
+        >
+          {item.parent}
+        </a>
       </li>
     ));
   }

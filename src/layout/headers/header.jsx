@@ -5,7 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 // internal
 import Menus from "./header-com/menus";
 import useSticky from "@/hooks/use-sticky";
-import logo from "@assets/img/logo/logo.svg";
+// import logo from "@assets/img/logo/logo.svg";
+import logo from "@assets/img/logo/logo.png";
 import useCartInfo from "@/hooks/use-cart-info";
 import OffCanvas from "@/components/common/off-canvas";
 import { openCartMini } from "@/redux/features/cartSlice";
@@ -65,7 +66,14 @@ const Header = () => {
                 <div className="col-xl-2 col-lg-2 col-md-4 col-6">
                   <div className="logo">
                     <Link href="/">
-                      <Image src={logo} alt="logo" />
+                      <Image
+                        src={logo}
+                        alt="logo"
+                        style={{
+                          width: "35%",
+                          height: "35%",
+                        }}
+                      />
                     </Link>
                   </div>
                 </div>
@@ -110,7 +118,7 @@ const Header = () => {
                   <div className="col-xl-6 col-lg-6">
                     <div className="main-menu menu-style-1">
                       <nav className="tp-main-menu-content">
-                        <Menus />
+                        {/* <Menus /> */}
                       </nav>
                     </div>
                   </div>
@@ -147,7 +155,14 @@ const Header = () => {
               <div className="col-xl-3 col-lg-3 col-md-3 col-6">
                 <div className="logo">
                   <Link href="/">
-                    <Image src={logo} alt="logo" />
+                    <Image
+                      src={logo}
+                      alt="logo"
+                      style={{
+                        width: "35%",
+                        height: "35%",
+                      }}
+                    />
                   </Link>
                 </div>
               </div>

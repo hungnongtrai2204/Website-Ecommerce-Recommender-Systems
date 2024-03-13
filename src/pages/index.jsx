@@ -19,7 +19,14 @@ import db from "@/utils/db";
 import Product from "../../models/Product";
 import Category from "../../models/Category";
 
-export default function Home({ products }) {
+export default function Home({
+  products,
+  productElestric,
+  productsDiscount,
+  productsFeatured,
+  productsSelling,
+}) {
+  console.log("productsSelling", productsSelling);
   return (
     <Wrapper>
       <SEO pageTitle="Home" />
@@ -30,10 +37,14 @@ export default function Home({ products }) {
       <ProductArea products={products} />
       <BannerArea />
       <OfferProducts products={products} />
-      <ProductGadgetArea />
+      <ProductGadgetArea productElestric={productElestric} />
       <ProductBanner />
-      <NewArrivals />
-      <ProductSmArea />
+      <NewArrivals products={products.slice(0, 8)} />
+      <ProductSmArea
+        productsDiscount={productsDiscount.slice(0, 3)}
+        productsFeatured={productsFeatured.slice(0, 3)}
+        productsSelling={productsSelling.slice(0, 3)}
+      />
       <BlogArea />
       <InstagramArea />
       <CtaArea />
@@ -44,17 +55,43 @@ export default function Home({ products }) {
 
 export const getServerSideProps = async () => {
   db.connectDB();
-  let products = await Product.find().sort({ createdAt: -1 }).lean().populate({
+  let products = await Product.find().sort({ createdAt: 1 }).lean().populate({
     path: "category",
     model: Category,
   });
-  let productMenFashion = await Product.find({
-    category: "62cfeb1e119f0cd432b478d6",
+  const productsDiscount = await Product.find()
+    .sort({ "subProducts.discount": -1 })
+    .lean()
+    .populate({
+      path: "category",
+      model: Category,
+    });
+  const productsSelling = await Product.find()
+    .sort({ "subProducts.sold": -1 })
+    .lean()
+    .populate({
+      path: "category",
+      model: Category,
+    });
+
+  const productsFeatured = await Product.find()
+    .sort({ rating: -1 })
+    .lean()
+    .populate({
+      path: "category",
+      model: Category,
+    });
+
+  let productElestric = await Product.find({
+    category: "653142d7e4363e03eb9e88a4",
   });
   return {
     props: {
       products: JSON.parse(JSON.stringify(products)),
-      productMenFashion: JSON.parse(JSON.stringify(productMenFashion)),
+      productsDiscount: JSON.parse(JSON.stringify(productsDiscount)),
+      productsFeatured: JSON.parse(JSON.stringify(productsFeatured)),
+      productsSelling: JSON.parse(JSON.stringify(productsSelling)),
+      productElestric: JSON.parse(JSON.stringify(productElestric)),
     },
   };
 };

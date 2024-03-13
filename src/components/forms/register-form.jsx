@@ -8,6 +8,7 @@ import { CloseEye, OpenEye } from "@/svg";
 import ErrorMsg from "../common/error-msg";
 import { notifyError, notifySuccess } from "@/utils/toast";
 import { useRegisterUserMutation } from "@/redux/features/auth/authApi";
+import axios from "axios";
 
 // schema
 const schema = Yup.object().shape({
@@ -25,23 +26,38 @@ const RegisterForm = () => {
   const router = useRouter();
   const { redirect } = router.query;
   // react hook form
-  const {register,handleSubmit,formState: { errors },reset} = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
     resolver: yupResolver(schema),
   });
   // on submit
-  const onSubmit = (data) => {
-    registerUser({
-      name: data.name,
-      email: data.email,
-      password: data.password,
-    }).then((result) => {
-      if (result?.error) {
-        notifyError("Register Failed");
-      } else {
-        notifySuccess(result?.data?.message);
-        // router.push(redirect || "/");
-      }
-    });
+  const onSubmit = async (user) => {
+    try {
+      const { data } = await axios.post("/api/auth/signup", {
+        name: user.name,
+        email: user.email,
+        password: user.password,
+      });
+      notifySuccess(data?.message);
+    } catch (error) {
+      notifyError("Đăng Ký Thất Bại: " + error.response.data.message);
+    }
+    // registerUser({
+    //   name: data.name,
+    //   email: data.email,
+    //   password: data.password,
+    // }).then((result) => {
+    //   if (result?.error) {
+    //     notifyError("Register Failed");
+    //   } else {
+    //     notifySuccess(result?.data?.message);
+    //     // router.push(redirect || "/");
+    //   }
+    // });
     reset();
   };
   return (
@@ -58,7 +74,7 @@ const RegisterForm = () => {
             />
           </div>
           <div className="tp-login-input-title">
-            <label htmlFor="name">Your Name</label>
+            <label htmlFor="name">Họ Và Tên</label>
           </div>
           <ErrorMsg msg={errors.name?.message} />
         </div>
@@ -73,7 +89,7 @@ const RegisterForm = () => {
             />
           </div>
           <div className="tp-login-input-title">
-            <label htmlFor="email">Your Email</label>
+            <label htmlFor="email">Email</label>
           </div>
           <ErrorMsg msg={errors.email?.message} />
         </div>
@@ -94,7 +110,7 @@ const RegisterForm = () => {
               </span>
             </div>
             <div className="tp-login-input-title">
-              <label htmlFor="password">Password</label>
+              <label htmlFor="password">Mật Khẩu</label>
             </div>
           </div>
           <ErrorMsg msg={errors.password?.message} />
@@ -111,14 +127,15 @@ const RegisterForm = () => {
             type="checkbox"
           />
           <label htmlFor="remember">
-            I accept the terms of the Service & <a href="#">Privacy Policy</a>.
+            Tôi chấp nhận các điều khoản của Dịch Vụ &{" "}
+            <a href="#">Chính Sách Bảo Mật</a>.
           </label>
           <ErrorMsg msg={errors.remember?.message} />
         </div>
       </div>
       <div className="tp-login-bottom">
         <button type="submit" className="tp-login-btn w-100">
-          Sign Up
+          Đăng Ký
         </button>
       </div>
     </form>
