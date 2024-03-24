@@ -7,8 +7,8 @@ import CategoryListLoader from "@/components/loader/home/category-list-loader";
 import categoryJSON from "@/data/category.json";
 
 const PrdCategoryList = () => {
-  const { data, isError, isLoading } =
-    useGetProductTypeCategoryQuery("electronics");
+  const { data, isError } = useGetProductTypeCategoryQuery("electronics");
+  const isLoading = false;
   const router = useRouter();
   const categories = JSON.parse(JSON.stringify(categoryJSON));
 

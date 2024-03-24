@@ -11,7 +11,8 @@ import { useSession } from "next-auth/react";
 const HeaderMainRight = ({ setIsCanvasOpen }) => {
   const { user: userInfo } = useSelector((state) => state.auth);
   const { wishlist } = useSelector((state) => state.wishlist);
-  const { quantity } = useCartInfo();
+  const { cart } = useSelector((state) => ({ ...state }));
+  const quantity = cart.cart_products.length;
   const { data: session } = useSession();
 
   const dispatch = useDispatch();

@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import useCartInfo from "@/hooks/use-cart-info";
 import ErrorMsg from "../common/error-msg";
 
-const CheckoutOrderArea = ({ checkoutData }) => {
+const CheckoutOrderArea = ({ checkoutData, cart }) => {
   const {
     handleShippingCost,
     cartTotal = 0,
@@ -17,35 +17,46 @@ const CheckoutOrderArea = ({ checkoutData }) => {
     showCard,
     setShowCard,
     shippingCost,
-    discountAmount
+    discountAmount,
   } = checkoutData;
-  const { cart_products } = useSelector((state) => state.cart);
+  // const { cart_products } = useSelector((state) => state.cart);
+  const subTotal = cart.cartTotal;
+  const cart_products = cart.products;
+
   const { total } = useCartInfo();
   return (
     <div className="tp-checkout-place white-bg">
-      <h3 className="tp-checkout-place-title">Your Order</h3>
+      <h3 className="tp-checkout-place-title">Đơn Hàng Của Bạn</h3>
 
       <div className="tp-order-info-list">
         <ul>
           {/*  header */}
           <li className="tp-order-info-list-header">
-            <h4>Product</h4>
-            <h4>Total</h4>
+            <h4>Sản phẩm</h4>
+            <h4>Tổng Cộng</h4>
           </li>
 
           {/*  item list */}
           {cart_products.map((item) => (
             <li key={item._id} className="tp-order-info-list-desc">
               <p>
-                {item.title} <span> x {item.orderQuantity}</span>
+                {item.name.length > 30
+                  ? item.name.slice(0, 30) + "..."
+                  : item.name}{" "}
+                <span> x {item.qty}</span>
               </p>
-              <span>${item.price.toFixed(2)}</span>
+              <span>
+                {(item.price * item.qty).toLocaleString("it-IT", {
+                  style: "currency",
+                  currency: "VND",
+                })}
+              </span>
             </li>
           ))}
 
           {/*  shipping */}
           <li className="tp-order-info-list-shipping">
-            <span>Shipping</span>
+            <span>Vận Chuyển</span>
             <div className="tp-order-info-list-shipping-item d-flex flex-column align-items-end">
               <span>
                 <input
@@ -57,10 +68,10 @@ const CheckoutOrderArea = ({ checkoutData }) => {
                   name="shippingOption"
                 />
                 <label
-                  onClick={() => handleShippingCost(60)}
+                  onClick={() => handleShippingCost(30000)}
                   htmlFor="flat_shipping"
                 >
-                  Delivery: Today Cost :<span>$60.00</span>
+                  Giao Hàng Nhanh: <span>30.000 VND</span>
                 </label>
                 <ErrorMsg msg={errors?.shippingOption?.message} />
               </span>
@@ -74,38 +85,58 @@ const CheckoutOrderArea = ({ checkoutData }) => {
                   name="shippingOption"
                 />
                 <label
-                  onClick={() => handleShippingCost(20)}
+                  onClick={() => handleShippingCost(15000)}
                   htmlFor="flat_rate"
                 >
-                  Delivery: 7 Days Cost: <span>$20.00</span>
+                  Giao Hàng Tiết Kiệm: <span>15.000 VND</span>
                 </label>
                 <ErrorMsg msg={errors?.shippingOption?.message} />
               </span>
             </div>
           </li>
 
-           {/*  subtotal */}
-           <li className="tp-order-info-list-subtotal">
-            <span>Subtotal</span>
-            <span>${total.toFixed(2)}</span>
+          {/*  subtotal */}
+          <li className="tp-order-info-list-subtotal">
+            <span>Tạm Tính</span>
+            <span>
+              {subTotal.toLocaleString("it-IT", {
+                style: "currency",
+                currency: "VND",
+              })}
+            </span>
           </li>
 
-           {/*  shipping cost */}
-           <li className="tp-order-info-list-subtotal">
-            <span>Shipping Cost</span>
-            <span>${shippingCost.toFixed(2)}</span>
+          {/*  shipping cost */}
+          <li className="tp-order-info-list-subtotal">
+            <span>Phí Vận Chuyển</span>
+            <span>
+              {shippingCost.toLocaleString("it-IT", {
+                style: "currency",
+                currency: "VND",
+              })}
+            </span>
           </li>
 
-           {/* discount */}
-           <li className="tp-order-info-list-subtotal">
-            <span>Discount</span>
-            <span>${discountAmount.toFixed(2)}</span>
+          {/* discount */}
+          <li className="tp-order-info-list-subtotal">
+            <span>Giảm Giá</span>
+            <span>
+              {discountAmount.toLocaleString("it-IT", {
+                style: "currency",
+                currency: "VND",
+              })}
+            </span>
           </li>
 
           {/* total */}
           <li className="tp-order-info-list-total">
-            <span>Total</span>
-            <span>${parseFloat(cartTotal).toFixed(2)}</span>
+            <span>Tổng Cộng</span>
+            <span>
+              {cart.cartTotal.toLocaleString("it-IT", {
+                style: "currency",
+                currency: "VND",
+              })}
+            </span>
           </li>
         </ul>
       </div>
@@ -120,8 +151,12 @@ const CheckoutOrderArea = ({ checkoutData }) => {
             name="payment"
             value="Card"
           />
-          <label onClick={() => setShowCard(true)} htmlFor="back_transfer" data-bs-toggle="direct-bank-transfer">
-            Credit Card
+          <label
+            onClick={() => setShowCard(true)}
+            htmlFor="back_transfer"
+            data-bs-toggle="direct-bank-transfer"
+          >
+            Thẻ Tín Dụng
           </label>
           {showCard && (
             <div className="direct-bank-transfer">
@@ -158,7 +193,7 @@ const CheckoutOrderArea = ({ checkoutData }) => {
             name="payment"
             value="COD"
           />
-          <label htmlFor="cod">Cash on Delivery</label>
+          <label htmlFor="cod">Thanh Toán Khi Nhận Hàng</label>
           <ErrorMsg msg={errors?.payment?.message} />
         </div>
       </div>
@@ -169,7 +204,7 @@ const CheckoutOrderArea = ({ checkoutData }) => {
           disabled={!stripe || isCheckoutSubmit}
           className="tp-checkout-btn w-100"
         >
-          Place Order
+          Đặt Hàng
         </button>
       </div>
     </div>

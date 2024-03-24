@@ -16,8 +16,8 @@ import InstagramArea from "@/components/instagram/instagram-area";
 import CtaArea from "@/components/cta/cta-area";
 import Footer from "@/layout/footers/footer";
 import db from "@/utils/db";
-import Product from "../../models/Product";
-import Category from "../../models/Category";
+import Product from "../models/Product";
+import Category from "../models/Category";
 
 export default function Home({
   products,
@@ -26,7 +26,6 @@ export default function Home({
   productsFeatured,
   productsSelling,
 }) {
-  console.log("productsSelling", productsSelling);
   return (
     <Wrapper>
       <SEO pageTitle="Home" />

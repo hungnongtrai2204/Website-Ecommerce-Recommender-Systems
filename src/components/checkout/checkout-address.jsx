@@ -1,19 +1,19 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
 
-const CheckoutCoupon = ({ handleCouponCode, couponRef, couponApplyMsg }) => {
+const CheckoutAddress = ({ handleCouponCode, couponRef, couponApplyMsg }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { coupon_info } = useSelector((state) => state.coupon);
   return (
     <div className="tp-checkout-verify-item">
       <p className="tp-checkout-verify-reveal">
-        Có phiếu giảm giá?{" "}
+        Bạn muốn thêm địa chỉ giao hàng mới?{" "}
         <button
           onClick={() => setIsOpen(!isOpen)}
           type="button"
           className="tp-checkout-coupon-form-reveal-btn"
         >
-          Bấm vào đây để nhập mã của bạn
+          Bấm vào đây để thêm địa chỉ giao hàng của bạn
         </button>
       </p>
 
@@ -42,4 +42,4 @@ const CheckoutCoupon = ({ handleCouponCode, couponRef, couponApplyMsg }) => {
   );
 };
 
-export default CheckoutCoupon;
+export default CheckoutAddress;

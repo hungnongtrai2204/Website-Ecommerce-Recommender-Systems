@@ -1,8 +1,8 @@
 import React from "react";
 import Image from "next/image";
-import payment_option_img from '@assets/img/product/icons/payment-option.png';
+import payment_option_img from "@assets/img/product/icons/payment-option.png";
 
-const DetailsBottomInfo = ({sku,category,tag}) => {
+const DetailsBottomInfo = ({ sku, category, tag }) => {
   return (
     <>
       {/* product-details-query */}
@@ -12,11 +12,11 @@ const DetailsBottomInfo = ({sku,category,tag}) => {
           <p>{sku}</p>
         </div>
         <div className="tp-product-details-query-item d-flex align-items-center">
-          <span>Category: </span>
+          <span>Danh mục: </span>
           <p>{category}</p>
         </div>
         <div className="tp-product-details-query-item d-flex align-items-center">
-          <span>Tag: </span>
+          <span>Nhãn: </span>
           <p>{tag}</p>
         </div>
       </div>
@@ -24,7 +24,7 @@ const DetailsBottomInfo = ({sku,category,tag}) => {
       {/*  product-details-social*/}
 
       <div className="tp-product-details-social">
-        <span>Share: </span>
+        <span>Chia Sẻ: </span>
         <a href="#">
           <i className="fa-brands fa-facebook-f"></i>
         </a>
@@ -43,14 +43,14 @@ const DetailsBottomInfo = ({sku,category,tag}) => {
 
       <div className="tp-product-details-msg mb-15">
         <ul>
-          <li>30 days easy returns</li>
-          <li>Order yours before 2.30pm for same day dispatch</li>
+          <li>30 ngày đổi trả dễ dàng</li>
+          <li>Đặt hàng trước 2h30 chiều để được giao hàng trong ngày</li>
         </ul>
       </div>
       {/* product-details-payment */}
       <div className="tp-product-details-payment d-flex align-items-center flex-wrap justify-content-between">
         <p>
-          Guaranteed safe <br /> & secure checkout
+          Guaranteed safe <br /> & thanh toán an toàn
         </p>
         <Image src={payment_option_img} alt="payment_option_img" />
       </div>

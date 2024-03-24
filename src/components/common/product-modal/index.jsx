@@ -23,7 +23,9 @@ const ProductModal = () => {
   const { productItem, isModalOpen } = useSelector(
     (state) => state.productModal
   );
-  let subProduct = productItem.subProducts[0];
+  const [style, setStyle] = useState(0);
+  const [size, setSize] = useState();
+  let subProduct = productItem.subProducts[style];
   const { status } = productItem || {};
   const imageURLs = subProduct.images;
   const img = imageURLs[0].url;
@@ -41,6 +43,13 @@ const ProductModal = () => {
   const handleImageActive = (item) => {
     setActiveImg(item.url);
     setLoading(true);
+  };
+  const styleChangeHandler = (value) => {
+    setStyle(value);
+    setSize(null);
+  };
+  const sizeChangeHandler = (value) => {
+    setSize(value);
   };
 
   return (
@@ -77,6 +86,12 @@ const ProductModal = () => {
               productItem={productItem}
               handleImageActive={handleImageActive}
               activeImg={activeImg}
+              detailsBottom={false}
+              productModal={true}
+              styleModal={style}
+              styleChangeHandler={styleChangeHandler}
+              sizeModal={size}
+              sizeChangeHandler={sizeChangeHandler}
             />
             {/* product-details-wrapper end */}
           </div>

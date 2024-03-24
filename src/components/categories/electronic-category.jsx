@@ -8,8 +8,8 @@ import HomeCateLoader from "../loader/home/home-cate-loader";
 import categoryJSON from "@/data/category.json";
 
 const ElectronicCategory = () => {
-  const { data, isLoading, isError } =
-    useGetProductTypeCategoryQuery("electronics");
+  const { data, isError } = useGetProductTypeCategoryQuery("electronics");
+  const isLoading = false;
   const categories = JSON.parse(JSON.stringify(categoryJSON));
   const router = useRouter();
 

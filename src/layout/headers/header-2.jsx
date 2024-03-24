@@ -27,7 +27,8 @@ const HeaderTwo = ({ style_2 = false }) => {
   const { wishlist } = useSelector((state) => state.wishlist);
   const [isOffCanvasOpen, setIsCanvasOpen] = useState(false);
   const { setSearchText, handleSubmit, searchText } = useSearchFormSubmit();
-  const { quantity } = useCartInfo();
+  const { cart } = useSelector((state) => ({ ...state }));
+  const quantity = cart.cart_products.length;
   const { sticky } = useSticky();
   const dispatch = useDispatch();
   return (

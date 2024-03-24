@@ -40,10 +40,11 @@ const slider_setting = {
 };
 
 const NewArrivals = ({ products }) => {
-  const { data, isError, isLoading } = useGetProductTypeQuery({
+  const { data, isError } = useGetProductTypeQuery({
     type: "electronics",
     query: "new=true",
   });
+  const isLoading = false;
   // decide what to render
   let content = null;
 

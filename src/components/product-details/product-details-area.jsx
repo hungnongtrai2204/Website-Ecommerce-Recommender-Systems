@@ -6,7 +6,9 @@ import DetailsTabNav from "./details-tab-nav";
 import RelatedProducts from "./related-products";
 
 const ProductDetailsArea = ({ productItem }) => {
-  const { _id, img, imageURLs, videoId,status } = productItem || {};
+  const { _id, videoId, status } = productItem || {};
+  const img = productItem.images[0].url;
+  const imageURLs = productItem.images;
   const [activeImg, setActiveImg] = useState(img);
   const dispatch = useDispatch();
   // active image change when img change
@@ -16,7 +18,7 @@ const ProductDetailsArea = ({ productItem }) => {
 
   // handle image active
   const handleImageActive = (item) => {
-    setActiveImg(item.img);
+    setActiveImg(item);
   };
   return (
     <section className="tp-product-details-area">
@@ -71,9 +73,7 @@ const ProductDetailsArea = ({ productItem }) => {
               <h3 className="tp-section-title-6">Related Products</h3>
             </div>
           </div>
-          <div className="row">
-            <RelatedProducts id={_id} />
-          </div>
+          <div className="row">{/* <RelatedProducts id={_id} /> */}</div>
         </div>
       </section>
       {/* related products end */}

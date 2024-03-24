@@ -14,11 +14,12 @@ const ProductSmArea = ({
   const {
     data: products,
     isError,
-    isLoading,
+    // isLoading,
     refetch,
   } = useGetProductTypeQuery({ type: "electronics" });
   // decide what to render
   let content = null;
+  const isLoading = false;
 
   if (isLoading) {
     content = <HomeSmPrdLoader loading={isLoading} />;
@@ -29,15 +30,15 @@ const ProductSmArea = ({
   if (!isLoading && !isError && products?.data?.length === 0) {
     content = <ErrorMsg msg="No Products found!" />;
   }
-  if (!isLoading && !isError && products?.data?.length > 0) {
-    const discount_prd = products.data
-      .filter((p) => p.discount > 0)
-      .slice(0, 3);
-    const featured_prd = products.data.filter((p) => p.featured).slice(0, 3);
-    const selling_prd = products.data
-      .slice()
-      .sort((a, b) => b.sellCount - a.sellCount)
-      .slice(0, 3);
+  if (productsDiscount?.length > 0) {
+    // const discount_prd = products.data
+    //   .filter((p) => p.discount > 0)
+    //   .slice(0, 3);
+    // const featured_prd = products.data.filter((p) => p.featured).slice(0, 3);
+    // const selling_prd = products.data
+    //   .slice()
+    //   .sort((a, b) => b.sellCount - a.sellCount)
+    //   .slice(0, 3);
     content = (
       <div className="row">
         <div className="col-xl-4 col-md-6">

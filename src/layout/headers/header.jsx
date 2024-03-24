@@ -27,9 +27,13 @@ import {
 
 const Header = () => {
   const { wishlist } = useSelector((state) => state.wishlist);
+  const { cart } = useSelector((state) => ({ ...state }));
+
   const [isOffCanvasOpen, setIsCanvasOpen] = useState(false);
   const [isCategoryActive, setIsCategoryActive] = useState(false);
-  const { quantity } = useCartInfo();
+  // const { quantity } = useCartInfo();
+  const quantity = cart.cart_products.length;
+
   const { sticky } = useSticky();
   const dispatch = useDispatch();
   return (

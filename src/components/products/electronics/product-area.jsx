@@ -9,10 +9,11 @@ const tabs = ["Mới", "Đặc Sắc", "Bán Nhiều"];
 
 const ProductArea = ({ products }) => {
   const [activeTab, setActiveTab] = useState("Mới");
-  const { data, isError, isLoading, refetch } = useGetProductTypeQuery({
+  const { data, isError, refetch } = useGetProductTypeQuery({
     type: "electronics",
     query: `${activeTab}=true`,
   });
+  const isLoading = false;
   // handleActiveTab
   const handleActiveTab = (tab) => {
     setActiveTab(tab);

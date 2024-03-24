@@ -15,11 +15,11 @@ import gadget_girl from "@assets/img/product/gadget/gadget-girl.png";
 import HomeGadgetPrdLoader from "@/components/loader/home/home-gadget-prd-loader";
 
 const ProductGadgetArea = ({ productElestric }) => {
-  const {
-    data: products,
-    isError,
-    isLoading,
-  } = useGetProductTypeQuery({ type: "electronics" });
+  const { data: products, isError } = useGetProductTypeQuery({
+    type: "electronics",
+  });
+  const isLoading = false;
+  console.log("productElestric", productElestric);
 
   // decide what to render
   let content = null;
@@ -33,7 +33,7 @@ const ProductGadgetArea = ({ productElestric }) => {
   if (!isLoading && !isError && products?.data?.length === 0) {
     content = <ErrorMsg msg="No Products found!" />;
   }
-  if (!isLoading && !isError && products?.data?.length > 0) {
+  if (productElestric?.length > 0) {
     const product_items = productElestric.slice(0, 6);
     content = product_items.map((prd, i) => (
       <div key={i} className="col-xl-4 col-sm-6">

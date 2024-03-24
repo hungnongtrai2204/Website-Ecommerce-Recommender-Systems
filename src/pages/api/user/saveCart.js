@@ -1,8 +1,8 @@
 import { createRouter } from "next-connect";
 import db from "@/utils/db";
-import User from "@/models/User";
-import Cart from "@/models/Cart";
-import Product from "@/models/Product";
+import User from "../../../models/User";
+import Cart from "../../../models/Cart";
+import Product from "../../../models/Product";
 import auth from "@/middleware/auth";
 
 const router = createRouter().use(auth);

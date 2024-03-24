@@ -1,24 +1,115 @@
 import React, { useEffect, useState } from "react";
 import { Rating } from "react-simple-star-rating";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
 // internal
 import { AskQuestion, CompareTwo, WishlistTwo } from "@/svg";
 import DetailsBottomInfo from "./details-bottom-info";
 import ProductDetailsCountdown from "./product-details-countdown";
 import ProductQuantity from "./product-quantity";
-import { add_cart_product } from "@/redux/features/cartSlice";
+import {
+  add_cart_product,
+  addToCart,
+  updateCart,
+} from "@/redux/features/cartSlice";
 import { add_to_wishlist } from "@/redux/features/wishlist-slice";
 import { add_to_compare } from "@/redux/features/compareSlice";
 import { handleModalClose } from "@/redux/features/productModalSlice";
 import Image from "next/image";
+import { useRouter } from "next/router";
+import axios from "axios";
+// import { addToCart, updateCart } from "../../../store/cartSlice";
+import { notifyError, notifySuccess } from "@/utils/toast";
 
 const DetailsWrapper = ({
   productItem,
   handleImageActive,
   activeImg,
   detailsBottom = false,
+  productModal = false,
+  styleModal,
+  styleChangeHandler,
+  sizeChangeHandler,
+  sizeModal,
 }) => {
+  const router = useRouter();
+  const [size, setSize] = useState(router.query.size);
+  const [qty, setQty] = useState(1);
+  const dispatch = useDispatch();
+  const { cart } = useSelector((state) => ({ ...state }));
+
+  useEffect(() => {
+    setSize("");
+    setQty(1);
+  }, [router.query.style]);
+  useEffect(() => {
+    if (qty > productItem.quantity) {
+      setQty(productItem.quantity);
+    }
+  }, [router.query.size]);
+
+  const increaseQtyHandler = () => {
+    if (productModal && sizeModal >= 0 && styleModal >= 0) {
+      console.log(productModal, sizeModal, styleModal);
+
+      qty < productItem.subProducts[styleModal].sizes[sizeModal].qty &&
+        setQty((pre) => pre + 1);
+    } else {
+      qty < productItem.quantity && setQty((pre) => pre + 1);
+    }
+  };
+
+  const decreaseQtyHandler = () => {
+    qty > 1 && setQty((pre) => pre - 1);
+  };
+  const addToCartHandler = async () => {
+    if (productModal == true && sizeModal == null) {
+      return;
+    }
+    if (!router.query.size && productModal == false) {
+      // setError("Vui lòng chọn một kích thước");
+      return;
+    }
+    const { data } = await axios.get(
+      `/api/product/${productItem._id}?style=${
+        productModal ? styleModal : productItem.style
+      }&size=${productModal ? sizeModal : router.query.size}`
+    );
+    if (qty > data.quantity) {
+      // setError(
+      //   "Số lượng bạn đã chọn còn nhiều hơn số lượng có sẵn. Hãy thử và giảm số lượng"
+      // );
+    } else if (data.quantity < 1) {
+      // setError("Sản phẩm này đã hết hàng");
+      return;
+    } else {
+      let _uid = `${data._id}_${
+        productModal ? styleModal : productItem.style
+      }_${productModal ? sizeModal : router.query.size}`;
+      let exist = cart.cart_products.find((p) => p._uid === _uid);
+      if (exist) {
+        let newCart = cart.cart_products.map((p) => {
+          if (p._uid == exist._uid) {
+            return { ...p, qty: p.qty + qty };
+          }
+          return p;
+        });
+        dispatch(updateCart(newCart));
+      } else {
+        dispatch(
+          addToCart({
+            ...data,
+            qty,
+            size: data.size,
+            _uid,
+          })
+        );
+      }
+      // toast.success(`Thêm ${qty} ${data.name} thành công.`);
+      notifySuccess(`Thêm ${qty} ${data.name} thành công.`);
+    }
+  };
+
   const {
     sku,
     img,
@@ -35,8 +126,8 @@ const DetailsWrapper = ({
   } = productItem || {};
   const [ratingVal, setRatingVal] = useState(0);
   const [textMore, setTextMore] = useState(false);
-  const dispatch = useDispatch();
-  let subProduct = productItem.subProducts[0];
+  let subProduct =
+    productItem.subProducts[router.query.style || styleModal || 0];
   console.log("Sub", subProduct);
   let prices = subProduct.sizes.map((s) => s.price).sort((a, b) => a - b);
   let colors = productItem.subProducts.map((p) => p.color);
@@ -120,16 +211,17 @@ const DetailsWrapper = ({
 
       {/* price */}
       <div className="tp-product-details-price-wrapper mb-20">
-        {discount > 0 ? (
+        {productItem.discount > 0 ? (
           <>
-            <span className="tp-product-details-price old-price">${price}</span>
+            <span className="tp-product-details-price old-price">
+              {productItem.priceBefore}
+            </span>
             <span className="tp-product-details-price new-price">
-              {" "}
-              $
-              {(
-                Number(price) -
-                (Number(price) * Number(discount)) / 100
-              ).toFixed(2)}
+              {!size ? (
+                <h2>{productItem.priceRange}</h2>
+              ) : (
+                <h1>{productItem.price}</h1>
+              )}
             </span>
           </>
         ) : (
@@ -175,34 +267,70 @@ const DetailsWrapper = ({
           <div className="tp-product-details-variation-item">
             <h4 className="tp-product-details-variation-title">Kích Thước :</h4>
             <div className="tp-product-details-variation-list">
-              {subProduct.sizes.map((item, i) => (
-                <button
-                  onClick={() => handleImageActive(item)}
-                  key={i}
-                  type="button"
-                  className={`color tp-color-variation-btn ${
-                    item.img === activeImg ? "active" : ""
-                  }`}
-                  // className={`color tp-color-variation-btn ${"active"}`}
-                >
-                  <span
-                    data-bg-color={`#DFF5FF`}
-                    style={{
-                      backgroundColor: `#DFF5FF`,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
+              {subProduct.sizes.map((item, i) => {
+                if (productModal) {
+                  return (
+                    <button
+                      onClick={() => sizeChangeHandler(i)}
+                      key={i}
+                      type="button"
+                      className={`color tp-color-variation-btn ${
+                        i == sizeModal ? "active" : ""
+                      }`}
+                      // className={`color tp-color-variation-btn ${"active"}`}
+                    >
+                      <span
+                        data-bg-color={`#DFF5FF`}
+                        style={{
+                          backgroundColor: `#DFF5FF`,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        {item.size}
+                      </span>
+                      {item.size && (
+                        <span className="tp-color-variation-tootltip">
+                          {item.size}
+                        </span>
+                      )}
+                    </button>
+                  );
+                }
+                return (
+                  <Link
+                    href={`//product-details/${productItem.slug}?style=${router.query.style}&size=${i}`}
                   >
-                    {item.size}
-                  </span>
-                  {item.size && (
-                    <span className="tp-color-variation-tootltip">
-                      {item.size}
-                    </span>
-                  )}
-                </button>
-              ))}
+                    <button
+                      // onClick={() => handleImageActive(item)}
+                      key={i}
+                      type="button"
+                      className={`color tp-color-variation-btn ${
+                        i == router.query.size ? "active" : ""
+                      }`}
+                      // className={`color tp-color-variation-btn ${"active"}`}
+                    >
+                      <span
+                        data-bg-color={`#DFF5FF`}
+                        style={{
+                          backgroundColor: `#DFF5FF`,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        {item.size}
+                      </span>
+                      {item.size && (
+                        <span className="tp-color-variation-tootltip">
+                          {item.size}
+                        </span>
+                      )}
+                    </button>
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -213,36 +341,86 @@ const DetailsWrapper = ({
           <div className="tp-product-details-variation-item">
             <h4 className="tp-product-details-variation-title">Màu sắc :</h4>
             <div className="tp-product-details-variation-list">
-              {colors.map((item, i) => (
-                <button
-                  onClick={() => handleImageActive(item)}
-                  key={i}
-                  type="button"
-                  className={`color tp-color-variation-btn ${
-                    item.img === activeImg ? "active" : ""
-                    // "active"
-                  }`}
-                  // className={`color tp-color-variation-btn ${"active"}`}
-                >
-                  <span
-                    data-bg-color={`#fff`}
-                    style={{ backgroundColor: `#fff` }}
+              {colors.map((item, i) => {
+                if (productModal) {
+                  return (
+                    <button
+                      onClick={() => styleChangeHandler(i)}
+                      key={i}
+                      type="button"
+                      className={`color tp-color-variation-btn ${
+                        i == styleModal ? "active" : ""
+                        // "active"
+                      }`}
+                      onMouseOver={() =>
+                        handleImageActive(
+                          productItem.subProducts[i].images[0].url
+                        )
+                      }
+                      onMouseLeave={() => handleImageActive("")}
+                      // className={`color tp-color-variation-btn ${"active"}`}
+                    >
+                      <span
+                        data-bg-color={`#fff`}
+                        style={{ backgroundColor: `#fff` }}
+                      >
+                        <img
+                          src={item.image}
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            borderRadius: "50%",
+                            objectFit: "cover",
+                          }}
+                        />
+                      </span>
+                      {item.size && (
+                        <span className="tp-color-variation-tootltip">asd</span>
+                      )}
+                    </button>
+                  );
+                }
+                return (
+                  <Link
+                    href={`/product-details/${productItem.slug}?style=${i}`}
                   >
-                    <img
-                      src={item.image}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        borderRadius: "50%",
-                        objectFit: "cover",
-                      }}
-                    />
-                  </span>
-                  {item.size && (
-                    <span className="tp-color-variation-tootltip">asd</span>
-                  )}
-                </button>
-              ))}
+                    <button
+                      // onClick={() => handleImageActive(item)}
+                      key={i}
+                      type="button"
+                      className={`color tp-color-variation-btn ${
+                        i == router.query.style ? "active" : ""
+                        // "active"
+                      }`}
+                      onMouseOver={() =>
+                        handleImageActive(
+                          productItem.subProducts[i].images[0].url
+                        )
+                      }
+                      onMouseLeave={() => handleImageActive("")}
+                      // className={`color tp-color-variation-btn ${"active"}`}
+                    >
+                      <span
+                        data-bg-color={`#fff`}
+                        style={{ backgroundColor: `#fff` }}
+                      >
+                        <img
+                          src={item.image}
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            borderRadius: "50%",
+                            objectFit: "cover",
+                          }}
+                        />
+                      </span>
+                      {item.size && (
+                        <span className="tp-color-variation-tootltip">asd</span>
+                      )}
+                    </button>
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -259,11 +437,15 @@ const DetailsWrapper = ({
         <h3 className="tp-product-details-action-title">Số Lượng</h3>
         <div className="tp-product-details-action-item-wrapper d-sm-flex align-items-center">
           {/* product quantity */}
-          <ProductQuantity />
+          <ProductQuantity
+            increaseQtyHandler={increaseQtyHandler}
+            decreaseQtyHandler={decreaseQtyHandler}
+            qty={qty}
+          />
           {/* product quantity */}
           <div className="tp-product-details-add-to-cart mb-15 w-100">
             <button
-              onClick={() => handleAddProduct(productItem)}
+              onClick={() => addToCartHandler()}
               disabled={status === "out-of-stock"}
               className="tp-product-details-add-to-cart-btn w-100"
             >
@@ -305,7 +487,16 @@ const DetailsWrapper = ({
       {/* product-details-action-sm end */}
 
       {detailsBottom && (
-        <DetailsBottomInfo category={category?.name} sku={sku} tag={tags[0]} />
+        <DetailsBottomInfo
+          category={category?.name}
+          sku={sku}
+          // tag={tags[0]}
+          tag={
+            productItem.subCategories.length > 0
+              ? productItem.subCategories[0].name
+              : ""
+          }
+        />
       )}
     </div>
   );

@@ -2,7 +2,7 @@ import { createRouter } from "next-connect";
 import db from "../../../utils/db";
 import { validateEmail } from "../../../utils/validation";
 import { createActivationToken } from "../../../utils/tokens";
-import User from "../../../../models/User";
+import User from "../../../models/User";
 import bcrypt from "bcrypt";
 import { sendEmail } from "../../../utils/sendEmail";
 import { activateEmailTemplate } from "../../../emails/activateEmailTemplate";

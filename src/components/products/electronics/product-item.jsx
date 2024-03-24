@@ -61,7 +61,7 @@ const ProductItem = ({ product, offer_style = false, prd }) => {
         } tp-product-item transition-3`}
       >
         <div className="tp-product-thumb p-relative fix">
-          <Link href={`/product-details/${prd?._id || _id}`}>
+          <Link href={`/product-details/${prd?.slug || _id}?style=${0}`}>
             <Image
               src={imgProduct || img}
               width="0"
@@ -136,7 +136,7 @@ const ProductItem = ({ product, offer_style = false, prd }) => {
             <a href="#">{prd?.category?.name || category?.name}</a>
           </div>
           <h3 className="tp-product-title">
-            <Link href={`/product-details/${prd?._id || _id}`}>
+            <Link href={`/product-details/${prd?.slug || _id}?style=${0}`}>
               {prd?.name.slice(0, 26) || title}
             </Link>
           </h3>

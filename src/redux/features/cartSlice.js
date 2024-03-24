@@ -5,7 +5,7 @@ import { notifyError, notifySuccess } from "@/utils/toast";
 const initialState = {
   cart_products: [],
   orderQuantity: 1,
-  cartMiniOpen:false,
+  cartMiniOpen: false,
 };
 
 export const cartSlice = createSlice({
@@ -29,7 +29,9 @@ export const cartSlice = createSlice({
                 state.orderQuantity !== 1
                   ? state.orderQuantity + item.orderQuantity
                   : item.orderQuantity + 1;
-              notifySuccess(`${state.orderQuantity} ${item.title} added to cart`);
+              notifySuccess(
+                `${state.orderQuantity} ${item.title} added to cart`
+              );
             } else {
               notifyError("No more quantity available for this product!");
               state.orderQuantity = 1;
@@ -39,6 +41,12 @@ export const cartSlice = createSlice({
         });
       }
       setLocalStorage("cart_products", state.cart_products);
+    },
+    addToCart(state, action) {
+      state.cart_products.push(action.payload);
+    },
+    updateCart(state, action) {
+      state.cart_products = action.payload;
     },
     increment: (state, { payload }) => {
       state.orderQuantity = state.orderQuantity + 1;
@@ -68,23 +76,28 @@ export const cartSlice = createSlice({
       notifyError(`${payload.title} Remove from cart`);
     },
     get_cart_products: (state, action) => {
-      state.cart_products = getLocalStorage("cart_products");
+      // state.cart_products = getLocalStorage("cart_products");
     },
     initialOrderQuantity: (state, { payload }) => {
-      state.orderQuantity = 1;
+      // state.orderQuantity = 1;
     },
-    clearCart:(state) => {
-      const isClearCart = window.confirm('Are you sure you want to remove all items ?');
-      if(isClearCart){
-        state.cart_products = []
+    clearCart: (state) => {
+      const isClearCart = window.confirm(
+        "Are you sure you want to remove all items ?"
+      );
+      if (isClearCart) {
+        state.cart_products = [];
       }
       setLocalStorage("cart_products", state.cart_products);
     },
-    openCartMini:(state,{payload}) => {
-      state.cartMiniOpen = true
+    openCartMini: (state, { payload }) => {
+      state.cartMiniOpen = true;
     },
-    closeCartMini:(state,{payload}) => {
-      state.cartMiniOpen = false
+    closeCartMini: (state, { payload }) => {
+      state.cartMiniOpen = false;
+    },
+    emptyCart(state, action) {
+      state.cart_products = [];
     },
   },
 });
@@ -100,5 +113,8 @@ export const {
   clearCart,
   closeCartMini,
   openCartMini,
+  addToCart,
+  updateCart,
+  emptyCart,
 } = cartSlice.actions;
 export default cartSlice.reducer;

@@ -1,4 +1,4 @@
-import React,{useState} from "react";
+import React, { useState } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
@@ -16,27 +16,31 @@ const schema = Yup.object().shape({
   comment: Yup.string().required().label("Comment"),
 });
 
-const ReviewForm = ({product_id}) => {
+const ReviewForm = ({ product_id }) => {
   const { user } = useSelector((state) => state.auth);
   const [rating, setRating] = useState(0);
   const [addReview, {}] = useAddReviewMutation();
 
   // Catch Rating value
   const handleRating = (rate) => {
-    setRating(rate)
-  }
+    setRating(rate);
+  };
 
-   // react hook form
-   const {register,handleSubmit,formState: { errors },reset} = useForm({
+  // react hook form
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
     resolver: yupResolver(schema),
   });
   // on submit
   const onSubmit = (data) => {
-    if(!user){
+    if (!user) {
       notifyError("Please login first");
       return;
-    }
-    else {
+    } else {
       addReview({
         userId: user?._id,
         productId: product_id,
@@ -56,59 +60,66 @@ const ReviewForm = ({product_id}) => {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="tp-product-details-review-form-rating d-flex align-items-center">
-        <p>Your Rating :</p>
+        <p>Đánh Giá Của Bạn :</p>
         <div className="tp-product-details-review-form-rating-icon d-flex align-items-center">
-          <Rating onClick={handleRating} allowFraction size={16} initialValue={rating} />
+          <Rating
+            onClick={handleRating}
+            allowFraction
+            size={16}
+            initialValue={rating}
+          />
         </div>
       </div>
       <div className="tp-product-details-review-input-wrapper">
         <div className="tp-product-details-review-input-box">
           <div className="tp-product-details-review-input">
             <textarea
-            {...register("comment", { required: `Comment is required!` })}
+              {...register("comment", { required: `Comment is required!` })}
               id="comment"
               name="comment"
-              placeholder="Write your review here..."
+              placeholder="Viết nhận xét của bạn ở đây..."
             />
           </div>
           <div className="tp-product-details-review-input-title">
-            <label htmlFor="msg">Your Review</label>
+            <label htmlFor="msg">Nhận Xét Của Bạn</label>
           </div>
           <ErrorMsg msg={errors.name?.comment} />
         </div>
         <div className="tp-product-details-review-input-box">
           <div className="tp-product-details-review-input">
             <input
-            {...register("name", { required: `Name is required!` })}
+              {...register("name", { required: `Name is required!` })}
               name="name"
               id="name"
               type="text"
-              placeholder="Shahnewaz Sakil"
+              placeholder="Nhập tên của bạn tại đây"
             />
           </div>
           <div className="tp-product-details-review-input-title">
-            <label htmlFor="name">Your Name</label>
+            <label htmlFor="name">Tên Của Bạn</label>
           </div>
           <ErrorMsg msg={errors.name?.name} />
         </div>
         <div className="tp-product-details-review-input-box">
           <div className="tp-product-details-review-input">
             <input
-            {...register("email", { required: `Name is required!` })}
+              {...register("email", { required: `Name is required!` })}
               name="email"
               id="email"
               type="email"
-              placeholder="shofy@mail.com"
+              placeholder="Nhập email của bạn tại đây"
             />
           </div>
           <div className="tp-product-details-review-input-title">
-            <label htmlFor="email">Your Email</label>
+            <label htmlFor="email">Email Của Bạn</label>
           </div>
           <ErrorMsg msg={errors.name?.email} />
         </div>
       </div>
       <div className="tp-product-details-review-btn-wrapper">
-        <button type="submit" className="tp-product-details-review-btn">Submit</button>
+        <button type="submit" className="tp-product-details-review-btn">
+          Đánh Giá
+        </button>
       </div>
     </form>
   );

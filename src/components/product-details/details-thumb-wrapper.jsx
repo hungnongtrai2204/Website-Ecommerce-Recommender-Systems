@@ -38,7 +38,7 @@ const DetailsThumbWrapper = ({
           <div className="tab-pane fade show active">
             <div className="tp-product-details-nav-main-thumb p-relative">
               <Image
-                src={activeImg}
+                src={activeImg || imageURLs[0].url}
                 alt="product img"
                 width={imgWidth}
                 height={imgHeight}

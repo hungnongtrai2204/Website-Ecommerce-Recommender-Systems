@@ -7,11 +7,13 @@ import ErrorMsg from "@/components/common/error-msg";
 import Loader from "@/components/loader/loader";
 import categoryJSON from "@/data/category.json";
 const HeaderCategory = ({ isCategoryActive, categoryType = "electronics" }) => {
-  const { data, isError, isLoading } =
-    useGetProductTypeCategoryQuery(categoryType);
+  const { data, isError } = useGetProductTypeCategoryQuery(categoryType);
+  const isLoading = false;
+  console.log("Data", data);
   const categories = JSON.parse(JSON.stringify(categoryJSON));
   const router = useRouter();
 
+  console.log(isLoading);
   // handle category route
   const handleCategoryRoute = (title, route) => {
     if (route === "parent") {
